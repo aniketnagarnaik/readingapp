@@ -1,5 +1,3 @@
-import TapButton from './TapButton';
-
 export default function HomeScreen({ onChoosePhoto, onChooseText, onChooseSamples }) {
   return (
     <div className="screen home-screen">
@@ -8,23 +6,23 @@ export default function HomeScreen({ onChoosePhoto, onChooseText, onChooseSample
         <p className="app-subtitle">Let's learn to read together!</p>
 
         <div className="home-buttons">
-          <TapButton className="home-btn home-btn-samples" onClick={onChooseSamples}>
+          <div role="button" tabIndex={0} className="home-btn home-btn-samples" onClick={onChooseSamples} style={{ cursor: 'pointer' }}>
             <span className="home-btn-icon">📚</span>
             <span className="home-btn-label">Sample Stories</span>
             <span className="home-btn-desc">50 fun stories ready to read</span>
-          </TapButton>
+          </div>
 
-          <TapButton className="home-btn home-btn-text" onClick={onChooseText}>
+          <div role="button" tabIndex={0} className="home-btn home-btn-text" onClick={onChooseText} style={{ cursor: 'pointer' }}>
             <span className="home-btn-icon">📖</span>
             <span className="home-btn-label">Paste a Story</span>
             <span className="home-btn-desc">Copy and paste text from anywhere</span>
-          </TapButton>
+          </div>
 
-          <TapButton className="home-btn home-btn-photo" onClick={onChoosePhoto}>
+          <div role="button" tabIndex={0} className="home-btn home-btn-photo" onClick={onChoosePhoto} style={{ cursor: 'pointer' }}>
             <span className="home-btn-icon">📷</span>
             <span className="home-btn-label">Upload a Photo</span>
             <span className="home-btn-desc">Take a picture of a book page</span>
-          </TapButton>
+          </div>
         </div>
       </div>
     </div>

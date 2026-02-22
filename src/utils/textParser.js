@@ -5,16 +5,25 @@ export function parseTextIntoPages(text) {
     .replace(/\s+/g, ' ')
     .trim();
 
-  const sentences = cleaned
-    .split(/(?<=[.!?])\s+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+  if (!cleaned) return [];
 
-  if (sentences.length === 0 && cleaned.length > 0) {
-    return [cleaned];
+  const sentences = [];
+  let current = '';
+
+  for (let i = 0; i < cleaned.length; i++) {
+    current += cleaned[i];
+    if ((cleaned[i] === '.' || cleaned[i] === '!' || cleaned[i] === '?') &&
+        (i === cleaned.length - 1 || cleaned[i + 1] === ' ')) {
+      sentences.push(current.trim());
+      current = '';
+    }
   }
 
-  return sentences;
+  if (current.trim()) {
+    sentences.push(current.trim());
+  }
+
+  return sentences.filter(s => s.length > 0);
 }
 
 export function splitSentenceIntoWords(sentence) {

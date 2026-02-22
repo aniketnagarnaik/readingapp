@@ -39,10 +39,17 @@ export function useTTS() {
     voiceRef.current = voice;
   }, []);
 
+  const prepareWord = useCallback((word) => {
+    if (word.length === 1 && /[a-zA-Z]/.test(word)) {
+      return word + '.';
+    }
+    return word;
+  }, []);
+
   const speakWord = useCallback(
     (word) =>
       new Promise((resolve) => {
-        const utterance = new SpeechSynthesisUtterance(word);
+        const utterance = new SpeechSynthesisUtterance(prepareWord(word));
         utterance.rate = 0.85;
         utterance.pitch = 1.0;
         if (voiceRef.current) utterance.voice = voiceRef.current;
@@ -50,7 +57,7 @@ export function useTTS() {
         utterance.onerror = () => resolve();
         window.speechSynthesis.speak(utterance);
       }),
-    []
+    [prepareWord]
   );
 
   const speakWordByWord = useCallback(
@@ -157,12 +164,12 @@ export function useTTS() {
 
   const speakOneWord = useCallback((word) => {
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(word);
+    const utterance = new SpeechSynthesisUtterance(prepareWord(word));
     utterance.rate = 0.85;
     utterance.pitch = 1.0;
     if (voiceRef.current) utterance.voice = voiceRef.current;
     window.speechSynthesis.speak(utterance);
-  }, []);
+  }, [prepareWord]);
 
   return {
     speakWordByWord,

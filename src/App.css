@@ -7,21 +7,25 @@
   padding: 0;
 }
 
-html, body, #root {
+html {
   height: 100%;
-  width: 100%;
 }
 
 body {
+  min-height: 100%;
+  width: 100%;
   font-family: 'Fredoka', sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #333;
   -webkit-font-smoothing: antialiased;
-  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 }
 
-button {
+#root {
+  min-height: 100vh;
+}
+
+button, [role="button"] {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   cursor: pointer;
@@ -30,19 +34,16 @@ button {
 }
 
 .app {
-  height: 100%;
-  width: 100%;
+  min-height: 100vh;
 }
 
 .screen {
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 24px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* ===== Home Screen ===== */
@@ -432,10 +433,15 @@ button {
   color: #333;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s;
   text-align: left;
   min-height: 100px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+.story-card span {
+  pointer-events: none;
 }
 
 .story-card:active {
@@ -502,6 +508,9 @@ button {
   justify-content: space-between;
   padding: 20px 24px;
   user-select: none;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 .reader-top-bar {
