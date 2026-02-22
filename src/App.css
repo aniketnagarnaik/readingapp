@@ -18,6 +18,12 @@ body {
   color: #333;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .app {
@@ -85,13 +91,20 @@ body {
   justify-content: center;
 }
 
-.home-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+.home-btn:active {
+  opacity: 0.85;
 }
 
-.home-btn:active {
-  transform: translateY(0);
+@media (hover: hover) {
+  .home-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .home-btn:active {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .home-btn-photo {
@@ -422,9 +435,15 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.story-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+.story-card:active {
+  opacity: 0.85;
+}
+
+@media (hover: hover) {
+  .story-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .story-number {

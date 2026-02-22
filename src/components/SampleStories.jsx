@@ -1,13 +1,14 @@
+import { useCallback } from 'react';
 import { SAMPLE_STORIES } from '../utils/sampleStories';
 
 export default function SampleStories({ onTextReady, onBack }) {
-  const handlePick = (story) => {
+  const handlePick = useCallback((story) => {
     onTextReady(story.text);
-  };
+  }, [onTextReady]);
 
   return (
     <div className="screen samples-screen">
-      <button className="back-btn" onClick={onBack}>
+      <button className="back-btn" onClick={onBack} onTouchEnd={(e) => { e.preventDefault(); onBack(); }}>
         ← Back
       </button>
 
@@ -20,6 +21,7 @@ export default function SampleStories({ onTextReady, onBack }) {
             key={i}
             className="story-card"
             onClick={() => handlePick(story)}
+            onTouchEnd={(e) => { e.preventDefault(); handlePick(story); }}
           >
             <span className="story-number">{i + 1}</span>
             <span className="story-title">{story.title}</span>
