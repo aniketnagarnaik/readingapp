@@ -155,9 +155,19 @@ export function useTTS() {
     setIsPlaying(false);
   }, []);
 
+  const speakOneWord = useCallback((word) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.rate = 0.85;
+    utterance.pitch = 1.0;
+    if (voiceRef.current) utterance.voice = voiceRef.current;
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
   return {
     speakWordByWord,
     speakNatural,
+    speakOneWord,
     stop,
     isPlaying,
     voices,

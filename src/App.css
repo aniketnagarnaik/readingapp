@@ -723,6 +723,29 @@ button {
   cursor: not-allowed;
 }
 
+/* ===== Speak Word Button ===== */
+.speak-word-btn {
+  padding: 12px 24px;
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  border-radius: 50px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.speak-word-btn:hover:not(:disabled) {
+  background: rgba(255, 215, 0, 0.25);
+}
+
+.speak-word-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* ===== Play Button ===== */
 .play-btn {
   display: flex;
