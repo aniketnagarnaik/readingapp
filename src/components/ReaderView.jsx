@@ -5,97 +5,124 @@ import TapButton from './TapButton';
 import { useTTS } from '../hooks/useTTS';
 import { splitSentenceIntoWords } from '../utils/textParser';
 
-const PAUSE_STEPS = [3000, 2500, 2000, 1500, 1000, 700, 400, 200, 100, 50, 0];
-const PAUSE_LABELS = ['Slowest', 'Very Slow', 'Slower', 'Slow', 'Medium', 'Normal', 'Fast', 'Faster', 'Quick', 'Rapid', 'No Gap'];
-const DEFAULT_PAUSE_INDEX = 3;
+var PAUSE_STEPS = [3000, 2500, 2000, 1500, 1000, 700, 400, 200, 100, 50, 0];
+var PAUSE_LABELS = ['Slowest', 'Very Slow', 'Slower', 'Slow', 'Medium', 'Normal', 'Fast', 'Faster', 'Quick', 'Rapid', 'No Gap'];
 
-export default function ReaderView({ pages, onBack }) {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [activeWordIndex, setActiveWordIndex] = useState(-1);
-  const [pauseIndex, setPauseIndex] = useState(DEFAULT_PAUSE_INDEX);
-  const [selectedVoiceName, setSelectedVoiceName] = useState('');
-  const [showVoices, setShowVoices] = useState(false);
-  const [mode, setMode] = useState('word');
-  const { speakWordByWord, speakNatural, speakOneWord, stop, isPlaying, voices, setPause, setVoice, currentVoice } = useTTS();
+export default function ReaderView(props) {
+  var pages = props.pages;
+  var onBack = props.onBack;
 
-  const currentSentence = pages[currentPage] || '';
-  const words = splitSentenceIntoWords(currentSentence);
+  var pageState = useState(0);
+  var currentPage = pageState[0];
+  var setCurrentPage = pageState[1];
 
-  useEffect(() => {
-    setPause(PAUSE_STEPS[pauseIndex]);
-  }, [pauseIndex, setPause]);
+  var wordState = useState(-1);
+  var activeWordIndex = wordState[0];
+  var setActiveWordIndex = wordState[1];
 
-  useEffect(() => {
-    if (currentVoice.current && !selectedVoiceName) {
-      setSelectedVoiceName(currentVoice.current.name);
+  var pauseState = useState(3);
+  var pauseIndex = pauseState[0];
+  var setPauseIndex = pauseState[1];
+
+  var voiceNameState = useState('');
+  var selectedVoiceName = voiceNameState[0];
+  var setSelectedVoiceName = voiceNameState[1];
+
+  var voicesVisState = useState(false);
+  var showVoices = voicesVisState[0];
+  var setShowVoices = voicesVisState[1];
+
+  var modeState = useState('word');
+  var mode = modeState[0];
+  var setMode = modeState[1];
+
+  var tts = useTTS();
+
+  var currentSentence = pages[currentPage] || '';
+  var words = splitSentenceIntoWords(currentSentence);
+
+  useEffect(function () {
+    tts.setPause(PAUSE_STEPS[pauseIndex]);
+  }, [pauseIndex]);
+
+  useEffect(function () {
+    if (tts.currentVoice.current && !selectedVoiceName) {
+      setSelectedVoiceName(tts.currentVoice.current.name);
     }
-  }, [voices, currentVoice, selectedVoiceName]);
+  }, [tts.voices]);
 
-  const handleSlower = useCallback(() => setPauseIndex((i) => Math.max(0, i - 1)), []);
-  const handleFaster = useCallback(() => setPauseIndex((i) => Math.min(PAUSE_STEPS.length - 1, i + 1)), []);
+  function handleSlower() {
+    setPauseIndex(function (i) { return Math.max(0, i - 1); });
+  }
 
-  const handleVoiceChange = useCallback((voice) => {
-    setVoice(voice);
+  function handleFaster() {
+    setPauseIndex(function (i) { return Math.min(PAUSE_STEPS.length - 1, i + 1); });
+  }
+
+  function handleVoiceChange(voice) {
+    tts.setVoice(voice);
     setSelectedVoiceName(voice.name);
     setShowVoices(false);
-  }, [setVoice]);
+  }
 
-  const handlePlaySentence = useCallback(() => {
-    const onWord = (wordIdx) => setActiveWordIndex(wordIdx);
-    const onDone = () => setActiveWordIndex(-1);
+  function handlePlaySentence() {
+    function onWord(wordIdx) { setActiveWordIndex(wordIdx); }
+    function onDone() { setActiveWordIndex(-1); }
     if (mode === 'natural') {
-      speakNatural(currentSentence, onWord, onDone);
+      tts.speakNatural(currentSentence, onWord, onDone);
     } else {
-      speakWordByWord(currentSentence, onWord, onDone);
+      tts.speakWordByWord(currentSentence, onWord, onDone);
     }
-  }, [mode, speakWordByWord, speakNatural, currentSentence]);
+  }
 
-  const handleStop = useCallback(() => {
-    stop();
+  function handleStop() {
+    tts.stop();
     setActiveWordIndex(-1);
-  }, [stop]);
+  }
 
-  const handleSpeakWord = useCallback(() => {
-    if (isPlaying) return;
-    const idx = activeWordIndex >= 0 ? activeWordIndex : 0;
+  function handleSpeakWord() {
+    if (tts.isPlaying) return;
+    var idx = activeWordIndex >= 0 ? activeWordIndex : 0;
     if (idx < words.length) {
       setActiveWordIndex(idx);
-      speakOneWord(words[idx]);
+      tts.speakOneWord(words[idx]);
     }
-  }, [isPlaying, activeWordIndex, words, speakOneWord]);
+  }
 
-  const handlePrevWord = useCallback(() => {
-    if (isPlaying) return;
-    setActiveWordIndex((prev) => (prev <= 0 ? 0 : prev - 1));
-  }, [isPlaying]);
+  function handlePrevWord() {
+    if (tts.isPlaying) return;
+    setActiveWordIndex(function (prev) { return prev <= 0 ? 0 : prev - 1; });
+  }
 
-  const handleNextWord = useCallback(() => {
-    if (isPlaying) return;
-    setActiveWordIndex((prev) => {
+  function handleNextWord() {
+    if (tts.isPlaying) return;
+    setActiveWordIndex(function (prev) {
       if (prev >= words.length - 1) return words.length - 1;
       if (prev < 0) return 0;
       return prev + 1;
     });
-  }, [isPlaying, words.length]);
+  }
 
-  const handlePrevPage = useCallback(() => {
+  function handlePrevPage() {
     handleStop();
-    setCurrentPage((p) => Math.max(0, p - 1));
+    setCurrentPage(function (p) { return Math.max(0, p - 1); });
     setActiveWordIndex(-1);
-  }, [handleStop]);
+  }
 
-  const handleNextPage = useCallback(() => {
+  function handleNextPage() {
     handleStop();
-    setCurrentPage((p) => Math.min(pages.length - 1, p + 1));
+    setCurrentPage(function (p) { return Math.min(pages.length - 1, p + 1); });
     setActiveWordIndex(-1);
-  }, [handleStop, pages.length]);
+  }
 
-  const handleToggleMode = useCallback(() => {
-    if (isPlaying) handleStop();
-    setMode((m) => (m === 'word' ? 'natural' : 'word'));
-  }, [isPlaying, handleStop]);
+  function handleToggleMode() {
+    if (tts.isPlaying) handleStop();
+    setMode(function (m) { return m === 'word' ? 'natural' : 'word'; });
+  }
 
-  const toggleVoices = useCallback(() => setShowVoices((v) => !v), []);
+  function toggleVoices() {
+    setShowVoices(function (v) { return !v; });
+  }
 
   return (
     <div className="screen reader-screen">
@@ -113,7 +140,7 @@ export default function ReaderView({ pages, onBack }) {
             </div>
           )}
 
-          <TapButton className={`mode-toggle-btn ${mode === 'natural' ? 'mode-active' : ''}`} onClick={handleToggleMode}>
+          <TapButton className={'mode-toggle-btn' + (mode === 'natural' ? ' mode-active' : '')} onClick={handleToggleMode}>
             {mode === 'word' ? '🐢 Word' : '🌊 Natural'}
           </TapButton>
 
@@ -125,15 +152,17 @@ export default function ReaderView({ pages, onBack }) {
 
       {showVoices && (
         <div className="voice-picker">
-          {voices.map((voice) => (
-            <TapButton
-              key={voice.name}
-              className={`voice-option ${voice.name === selectedVoiceName ? 'voice-active' : ''}`}
-              onClick={() => handleVoiceChange(voice)}
-            >
-              {voice.name}
-            </TapButton>
-          ))}
+          {tts.voices.map(function (voice) {
+            return (
+              <TapButton
+                key={voice.name}
+                className={'voice-option' + (voice.name === selectedVoiceName ? ' voice-active' : '')}
+                onClick={function () { handleVoiceChange(voice); }}
+              >
+                {voice.name}
+              </TapButton>
+            );
+          })}
         </div>
       )}
 
@@ -141,17 +170,17 @@ export default function ReaderView({ pages, onBack }) {
         <WordDisplay sentence={currentSentence} activeWordIndex={activeWordIndex} />
 
         <div className="word-controls">
-          <TapButton className="word-nav-btn" onClick={handlePrevWord} disabled={isPlaying || activeWordIndex <= 0}>◀</TapButton>
-          <TapButton className="speak-word-btn" onClick={handleSpeakWord} disabled={isPlaying}>🔊 Word</TapButton>
-          <TapButton className="word-nav-btn" onClick={handleNextWord} disabled={isPlaying || activeWordIndex >= words.length - 1}>▶</TapButton>
+          <TapButton className="word-nav-btn" onClick={handlePrevWord} disabled={tts.isPlaying || activeWordIndex <= 0}>◀</TapButton>
+          <TapButton className="speak-word-btn" onClick={handleSpeakWord} disabled={tts.isPlaying}>🔊 Word</TapButton>
+          <TapButton className="word-nav-btn" onClick={handleNextWord} disabled={tts.isPlaying || activeWordIndex >= words.length - 1}>▶</TapButton>
         </div>
 
         <TapButton
-          className={`play-btn ${isPlaying ? 'playing' : ''}`}
-          onClick={isPlaying ? handleStop : handlePlaySentence}
+          className={'play-btn' + (tts.isPlaying ? ' playing' : '')}
+          onClick={tts.isPlaying ? handleStop : handlePlaySentence}
         >
-          <span className="play-btn-icon">{isPlaying ? '⏹' : '▶️'}</span>
-          <span className="play-btn-label">{isPlaying ? 'Stop' : 'Listen'}</span>
+          <span className="play-btn-icon">{tts.isPlaying ? '⏹' : '▶️'}</span>
+          <span className="play-btn-label">{tts.isPlaying ? 'Stop' : 'Listen'}</span>
         </TapButton>
       </div>
 

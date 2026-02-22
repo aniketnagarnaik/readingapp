@@ -507,10 +507,8 @@ button, [role="button"] {
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   justify-content: space-between;
   padding: 20px 24px;
+  -webkit-user-select: none;
   user-select: none;
-  height: 100vh;
-  min-height: 100vh;
-  overflow: hidden;
 }
 
 .reader-top-bar {
