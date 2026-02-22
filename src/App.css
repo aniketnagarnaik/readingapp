@@ -24,6 +24,9 @@ body {
 button {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .app {

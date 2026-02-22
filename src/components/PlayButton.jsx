@@ -4,7 +4,6 @@ export default function PlayButton({ isPlaying, onPlay, onStop }) {
     <button
       className={`play-btn ${isPlaying ? 'playing' : ''}`}
       onClick={handler}
-      onTouchEnd={(e) => { e.preventDefault(); handler(); }}
       aria-label={isPlaying ? 'Stop reading' : 'Play sentence'}
     >
       <span className="play-btn-icon">{isPlaying ? '⏹' : '▶️'}</span>

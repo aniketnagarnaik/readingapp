@@ -9,7 +9,6 @@ export default function PageNavigation({
       <button
         className="nav-btn nav-prev"
         onClick={onPrev}
-        onTouchEnd={(e) => { e.preventDefault(); onPrev(); }}
         disabled={currentPage <= 0}
       >
         ← Back
@@ -22,7 +21,6 @@ export default function PageNavigation({
       <button
         className="nav-btn nav-next"
         onClick={onNext}
-        onTouchEnd={(e) => { e.preventDefault(); onNext(); }}
         disabled={currentPage >= totalPages - 1}
       >
         Next →

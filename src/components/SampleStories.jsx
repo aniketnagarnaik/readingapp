@@ -7,8 +7,8 @@ export default function SampleStories({ onTextReady, onBack }) {
   }, [onTextReady]);
 
   return (
-    <div className="screen samples-screen">
-      <button className="back-btn" onClick={onBack} onTouchEnd={(e) => { e.preventDefault(); onBack(); }}>
+    <div className="screen samples-screen" onClick={() => {}}>
+      <button className="back-btn" onClick={onBack}>
         ← Back
       </button>
 
@@ -21,7 +21,6 @@ export default function SampleStories({ onTextReady, onBack }) {
             key={i}
             className="story-card"
             onClick={() => handlePick(story)}
-            onTouchEnd={(e) => { e.preventDefault(); handlePick(story); }}
           >
             <span className="story-number">{i + 1}</span>
             <span className="story-title">{story.title}</span>

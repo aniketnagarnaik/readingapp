@@ -31,13 +31,8 @@ export default function ReaderView({ pages, onBack }) {
     }
   }, [voices, currentVoice, selectedVoiceName]);
 
-  const handleSlower = () => {
-    setPauseIndex((i) => Math.max(0, i - 1));
-  };
-
-  const handleFaster = () => {
-    setPauseIndex((i) => Math.min(PAUSE_STEPS.length - 1, i + 1));
-  };
+  const handleSlower = () => setPauseIndex((i) => Math.max(0, i - 1));
+  const handleFaster = () => setPauseIndex((i) => Math.min(PAUSE_STEPS.length - 1, i + 1));
 
   const handleVoiceChange = (voice) => {
     setVoice(voice);
@@ -48,7 +43,6 @@ export default function ReaderView({ pages, onBack }) {
   const handlePlaySentence = useCallback(() => {
     const onWord = (wordIdx) => setActiveWordIndex(wordIdx);
     const onDone = () => setActiveWordIndex(-1);
-
     if (mode === 'natural') {
       speakNatural(currentSentence, onWord, onDone);
     } else {
@@ -72,10 +66,7 @@ export default function ReaderView({ pages, onBack }) {
 
   const handlePrevWord = () => {
     if (isPlaying) return;
-    setActiveWordIndex((prev) => {
-      if (prev <= 0) return 0;
-      return prev - 1;
-    });
+    setActiveWordIndex((prev) => (prev <= 0 ? 0 : prev - 1));
   };
 
   const handleNextWord = () => {
@@ -105,38 +96,26 @@ export default function ReaderView({ pages, onBack }) {
   };
 
   return (
-    <div className="screen reader-screen">
+    <div className="screen reader-screen" onClick={() => {}}>
       <div className="reader-top-bar">
-        <button className="back-btn home-back-btn" onClick={onBack} onTouchEnd={(e) => { e.preventDefault(); onBack(); }}>
+        <button className="back-btn home-back-btn" onClick={onBack}>
           ← Home
         </button>
 
         <div className="top-controls">
           {mode === 'word' && (
             <div className="speed-control">
-              <button className="speed-btn" onClick={handleSlower} onTouchEnd={(e) => { e.preventDefault(); handleSlower(); }} disabled={pauseIndex <= 0}>
-                −
-              </button>
+              <button className="speed-btn" onClick={handleSlower} disabled={pauseIndex <= 0}>−</button>
               <span className="speed-label">{PAUSE_LABELS[pauseIndex]}</span>
-              <button className="speed-btn" onClick={handleFaster} onTouchEnd={(e) => { e.preventDefault(); handleFaster(); }} disabled={pauseIndex >= PAUSE_STEPS.length - 1}>
-                +
-              </button>
+              <button className="speed-btn" onClick={handleFaster} disabled={pauseIndex >= PAUSE_STEPS.length - 1}>+</button>
             </div>
           )}
 
-          <button
-            className={`mode-toggle-btn ${mode === 'natural' ? 'mode-active' : ''}`}
-            onClick={handleToggleMode}
-            onTouchEnd={(e) => { e.preventDefault(); handleToggleMode(); }}
-          >
+          <button className={`mode-toggle-btn ${mode === 'natural' ? 'mode-active' : ''}`} onClick={handleToggleMode}>
             {mode === 'word' ? '🐢 Word' : '🌊 Natural'}
           </button>
 
-          <button
-            className="voice-toggle-btn"
-            onClick={() => setShowVoices(!showVoices)}
-            onTouchEnd={(e) => { e.preventDefault(); setShowVoices(!showVoices); }}
-          >
+          <button className="voice-toggle-btn" onClick={() => setShowVoices(!showVoices)}>
             🎤 Voice
           </button>
         </div>
@@ -149,7 +128,6 @@ export default function ReaderView({ pages, onBack }) {
               key={voice.name}
               className={`voice-option ${voice.name === selectedVoiceName ? 'voice-active' : ''}`}
               onClick={() => handleVoiceChange(voice)}
-              onTouchEnd={(e) => { e.preventDefault(); handleVoiceChange(voice); }}
             >
               {voice.name}
             </button>
@@ -158,45 +136,15 @@ export default function ReaderView({ pages, onBack }) {
       )}
 
       <div className="reader-content">
-        <WordDisplay
-          sentence={currentSentence}
-          activeWordIndex={activeWordIndex}
-        />
+        <WordDisplay sentence={currentSentence} activeWordIndex={activeWordIndex} />
 
         <div className="word-controls">
-          <button
-            className="word-nav-btn"
-            onClick={handlePrevWord}
-            onTouchEnd={(e) => { e.preventDefault(); handlePrevWord(); }}
-            disabled={isPlaying || activeWordIndex <= 0}
-          >
-            ◀
-          </button>
-
-          <button
-            className="speak-word-btn"
-            onClick={handleSpeakWord}
-            onTouchEnd={(e) => { e.preventDefault(); handleSpeakWord(); }}
-            disabled={isPlaying}
-          >
-            🔊 Word
-          </button>
-
-          <button
-            className="word-nav-btn"
-            onClick={handleNextWord}
-            onTouchEnd={(e) => { e.preventDefault(); handleNextWord(); }}
-            disabled={isPlaying || activeWordIndex >= words.length - 1}
-          >
-            ▶
-          </button>
+          <button className="word-nav-btn" onClick={handlePrevWord} disabled={isPlaying || activeWordIndex <= 0}>◀</button>
+          <button className="speak-word-btn" onClick={handleSpeakWord} disabled={isPlaying}>🔊 Word</button>
+          <button className="word-nav-btn" onClick={handleNextWord} disabled={isPlaying || activeWordIndex >= words.length - 1}>▶</button>
         </div>
 
-        <PlayButton
-          isPlaying={isPlaying}
-          onPlay={handlePlaySentence}
-          onStop={handleStop}
-        />
+        <PlayButton isPlaying={isPlaying} onPlay={handlePlaySentence} onStop={handleStop} />
       </div>
 
       <PageNavigation
