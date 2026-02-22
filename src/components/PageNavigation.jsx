@@ -1,3 +1,5 @@
+import TapButton from './TapButton';
+
 export default function PageNavigation({
   currentPage,
   totalPages,
@@ -6,25 +8,25 @@ export default function PageNavigation({
 }) {
   return (
     <div className="page-navigation">
-      <button
+      <TapButton
         className="nav-btn nav-prev"
         onClick={onPrev}
         disabled={currentPage <= 0}
       >
         ← Back
-      </button>
+      </TapButton>
 
       <span className="page-indicator">
         {currentPage + 1} / {totalPages}
       </span>
 
-      <button
+      <TapButton
         className="nav-btn nav-next"
         onClick={onNext}
         disabled={currentPage >= totalPages - 1}
       >
         Next →
-      </button>
+      </TapButton>
     </div>
   );
 }

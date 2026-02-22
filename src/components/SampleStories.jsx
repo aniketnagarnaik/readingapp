@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { SAMPLE_STORIES } from '../utils/sampleStories';
+import TapButton from './TapButton';
 
 export default function SampleStories({ onTextReady, onBack }) {
   const handlePick = useCallback((story) => {
@@ -7,17 +8,17 @@ export default function SampleStories({ onTextReady, onBack }) {
   }, [onTextReady]);
 
   return (
-    <div className="screen samples-screen" onClick={() => {}}>
-      <button className="back-btn" onClick={onBack}>
+    <div className="screen samples-screen">
+      <TapButton className="back-btn" onClick={onBack}>
         ← Back
-      </button>
+      </TapButton>
 
       <h2>Pick a Story</h2>
       <p>Choose a story to start reading!</p>
 
       <div className="stories-grid">
         {SAMPLE_STORIES.map((story, i) => (
-          <button
+          <TapButton
             key={i}
             className="story-card"
             onClick={() => handlePick(story)}
@@ -27,7 +28,7 @@ export default function SampleStories({ onTextReady, onBack }) {
             <span className="story-preview">
               {story.text.slice(0, 60)}...
             </span>
-          </button>
+          </TapButton>
         ))}
       </div>
     </div>

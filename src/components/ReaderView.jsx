@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import WordDisplay from './WordDisplay';
-import PlayButton from './PlayButton';
 import PageNavigation from './PageNavigation';
+import TapButton from './TapButton';
 import { useTTS } from '../hooks/useTTS';
 import { splitSentenceIntoWords } from '../utils/textParser';
 
@@ -31,14 +31,14 @@ export default function ReaderView({ pages, onBack }) {
     }
   }, [voices, currentVoice, selectedVoiceName]);
 
-  const handleSlower = () => setPauseIndex((i) => Math.max(0, i - 1));
-  const handleFaster = () => setPauseIndex((i) => Math.min(PAUSE_STEPS.length - 1, i + 1));
+  const handleSlower = useCallback(() => setPauseIndex((i) => Math.max(0, i - 1)), []);
+  const handleFaster = useCallback(() => setPauseIndex((i) => Math.min(PAUSE_STEPS.length - 1, i + 1)), []);
 
-  const handleVoiceChange = (voice) => {
+  const handleVoiceChange = useCallback((voice) => {
     setVoice(voice);
     setSelectedVoiceName(voice.name);
     setShowVoices(false);
-  };
+  }, [setVoice]);
 
   const handlePlaySentence = useCallback(() => {
     const onWord = (wordIdx) => setActiveWordIndex(wordIdx);
@@ -55,82 +55,84 @@ export default function ReaderView({ pages, onBack }) {
     setActiveWordIndex(-1);
   }, [stop]);
 
-  const handleSpeakWord = () => {
+  const handleSpeakWord = useCallback(() => {
     if (isPlaying) return;
     const idx = activeWordIndex >= 0 ? activeWordIndex : 0;
     if (idx < words.length) {
       setActiveWordIndex(idx);
       speakOneWord(words[idx]);
     }
-  };
+  }, [isPlaying, activeWordIndex, words, speakOneWord]);
 
-  const handlePrevWord = () => {
+  const handlePrevWord = useCallback(() => {
     if (isPlaying) return;
     setActiveWordIndex((prev) => (prev <= 0 ? 0 : prev - 1));
-  };
+  }, [isPlaying]);
 
-  const handleNextWord = () => {
+  const handleNextWord = useCallback(() => {
     if (isPlaying) return;
     setActiveWordIndex((prev) => {
       if (prev >= words.length - 1) return words.length - 1;
       if (prev < 0) return 0;
       return prev + 1;
     });
-  };
+  }, [isPlaying, words.length]);
 
-  const handlePrevPage = () => {
+  const handlePrevPage = useCallback(() => {
     handleStop();
     setCurrentPage((p) => Math.max(0, p - 1));
     setActiveWordIndex(-1);
-  };
+  }, [handleStop]);
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     handleStop();
     setCurrentPage((p) => Math.min(pages.length - 1, p + 1));
     setActiveWordIndex(-1);
-  };
+  }, [handleStop, pages.length]);
 
-  const handleToggleMode = () => {
+  const handleToggleMode = useCallback(() => {
     if (isPlaying) handleStop();
     setMode((m) => (m === 'word' ? 'natural' : 'word'));
-  };
+  }, [isPlaying, handleStop]);
+
+  const toggleVoices = useCallback(() => setShowVoices((v) => !v), []);
 
   return (
-    <div className="screen reader-screen" onClick={() => {}}>
+    <div className="screen reader-screen">
       <div className="reader-top-bar">
-        <button className="back-btn home-back-btn" onClick={onBack}>
+        <TapButton className="back-btn home-back-btn" onClick={onBack}>
           ← Home
-        </button>
+        </TapButton>
 
         <div className="top-controls">
           {mode === 'word' && (
             <div className="speed-control">
-              <button className="speed-btn" onClick={handleSlower} disabled={pauseIndex <= 0}>−</button>
+              <TapButton className="speed-btn" onClick={handleSlower} disabled={pauseIndex <= 0}>−</TapButton>
               <span className="speed-label">{PAUSE_LABELS[pauseIndex]}</span>
-              <button className="speed-btn" onClick={handleFaster} disabled={pauseIndex >= PAUSE_STEPS.length - 1}>+</button>
+              <TapButton className="speed-btn" onClick={handleFaster} disabled={pauseIndex >= PAUSE_STEPS.length - 1}>+</TapButton>
             </div>
           )}
 
-          <button className={`mode-toggle-btn ${mode === 'natural' ? 'mode-active' : ''}`} onClick={handleToggleMode}>
+          <TapButton className={`mode-toggle-btn ${mode === 'natural' ? 'mode-active' : ''}`} onClick={handleToggleMode}>
             {mode === 'word' ? '🐢 Word' : '🌊 Natural'}
-          </button>
+          </TapButton>
 
-          <button className="voice-toggle-btn" onClick={() => setShowVoices(!showVoices)}>
+          <TapButton className="voice-toggle-btn" onClick={toggleVoices}>
             🎤 Voice
-          </button>
+          </TapButton>
         </div>
       </div>
 
       {showVoices && (
         <div className="voice-picker">
           {voices.map((voice) => (
-            <button
+            <TapButton
               key={voice.name}
               className={`voice-option ${voice.name === selectedVoiceName ? 'voice-active' : ''}`}
               onClick={() => handleVoiceChange(voice)}
             >
               {voice.name}
-            </button>
+            </TapButton>
           ))}
         </div>
       )}
@@ -139,12 +141,18 @@ export default function ReaderView({ pages, onBack }) {
         <WordDisplay sentence={currentSentence} activeWordIndex={activeWordIndex} />
 
         <div className="word-controls">
-          <button className="word-nav-btn" onClick={handlePrevWord} disabled={isPlaying || activeWordIndex <= 0}>◀</button>
-          <button className="speak-word-btn" onClick={handleSpeakWord} disabled={isPlaying}>🔊 Word</button>
-          <button className="word-nav-btn" onClick={handleNextWord} disabled={isPlaying || activeWordIndex >= words.length - 1}>▶</button>
+          <TapButton className="word-nav-btn" onClick={handlePrevWord} disabled={isPlaying || activeWordIndex <= 0}>◀</TapButton>
+          <TapButton className="speak-word-btn" onClick={handleSpeakWord} disabled={isPlaying}>🔊 Word</TapButton>
+          <TapButton className="word-nav-btn" onClick={handleNextWord} disabled={isPlaying || activeWordIndex >= words.length - 1}>▶</TapButton>
         </div>
 
-        <PlayButton isPlaying={isPlaying} onPlay={handlePlaySentence} onStop={handleStop} />
+        <TapButton
+          className={`play-btn ${isPlaying ? 'playing' : ''}`}
+          onClick={isPlaying ? handleStop : handlePlaySentence}
+        >
+          <span className="play-btn-icon">{isPlaying ? '⏹' : '▶️'}</span>
+          <span className="play-btn-label">{isPlaying ? 'Stop' : 'Listen'}</span>
+        </TapButton>
       </div>
 
       <PageNavigation
