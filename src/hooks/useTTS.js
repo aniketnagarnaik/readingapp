@@ -16,7 +16,8 @@ export function useTTS() {
 
       if (!voiceRef.current && englishVoices.length > 0) {
         const aaron = englishVoices.find((v) => v.name.includes('Aaron'));
-        voiceRef.current = aaron || englishVoices[1] || englishVoices[0];
+        const samantha = englishVoices.find((v) => v.name.includes('Samantha'));
+        voiceRef.current = aaron || samantha || englishVoices[1] || englishVoices[0];
       }
     };
 
