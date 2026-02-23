@@ -4,6 +4,61 @@ import ColumnMethod from './ColumnMethod';
 import { generateProblem, generateSolutionSteps, numberToWords } from '../utils/mathProblems';
 import rustyImg from '../assets/rusty.png';
 
+function MiniCounting({ step }) {
+  var d1 = step.columnD1;
+  var d2 = step.columnD2;
+  var carryIn = step.columnCarry || 0;
+  var op = step.columnOperation;
+  var result = step.columnResult;
+
+  if (op === 'addition') {
+    var totalToShow = d1 + d2 + carryIn;
+    var cars = [];
+    for (var i = 0; i < totalToShow; i++) {
+      var color = 'red';
+      if (i >= d1 && i < d1 + d2) color = 'blue';
+      if (i >= d1 + d2) color = 'green';
+      cars.push(
+        <span key={i} className={'mini-car mini-car-' + color}>🚗</span>
+      );
+    }
+
+    var label = d1 + ' + ' + d2;
+    if (carryIn > 0) label += ' + ' + carryIn;
+    label += ' = ' + result;
+
+    return (
+      <div className="mini-counting">
+        <div className="mini-counting-label">{label}</div>
+        <div className="mini-counting-cars">{cars}</div>
+        {d1 > 0 && <span className="mini-legend"><span className="mini-dot mini-dot-red">🚗</span> = {d1}</span>}
+        {d2 > 0 && <span className="mini-legend"><span className="mini-dot mini-dot-blue">🚗</span> = {d2}</span>}
+        {carryIn > 0 && <span className="mini-legend"><span className="mini-dot mini-dot-green">🚗</span> = {carryIn} (carry)</span>}
+      </div>
+    );
+  }
+
+  if (op === 'subtraction') {
+    var subCars = [];
+    for (var j = 0; j < d1; j++) {
+      var isRemoved = j >= d1 - d2;
+      subCars.push(
+        <span key={j} className={'mini-car' + (isRemoved ? ' mini-car-faded' : ' mini-car-red')}>🚗</span>
+      );
+    }
+
+    return (
+      <div className="mini-counting">
+        <div className="mini-counting-label">{d1 + ' - ' + d2 + ' = ' + result}</div>
+        <div className="mini-counting-cars">{subCars}</div>
+        <span className="mini-legend">{d1 - d2} left after removing {d2}</span>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 export default function MathLearn({ difficulty, operation, onBack }) {
   var modeState = useState('watch');
   var mode = modeState[0];
@@ -167,6 +222,10 @@ export default function MathLearn({ difficulty, operation, onBack }) {
               {(currentStep.type === 'column_intro' || currentStep.type === 'column_step' ||
                 currentStep.type === 'column_borrow' || currentStep.type === 'column_answer') && (
                 <ColumnMethod step={currentStep} />
+              )}
+
+              {currentStep.type === 'column_step' && currentStep.columnD1 != null && (
+                <MiniCounting step={currentStep} />
               )}
 
               {currentStep.type === 'answer' || currentStep.type === 'column_answer' ? (

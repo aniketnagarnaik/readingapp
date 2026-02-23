@@ -32,6 +32,7 @@ export default function ColumnMethod({ step }) {
   return (
     <div className="column-method">
       <div className="column-row column-carry-row">
+        <span className="column-cell column-symbol-cell">{''}</span>
         {carryRow.map(function (val, i) {
           return (
             <span key={'c' + i} className="column-cell column-carry-cell">

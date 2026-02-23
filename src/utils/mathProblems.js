@@ -237,17 +237,18 @@ function generateColumnSteps(num1, num2, operation) {
     for (var col = 0; col < maxDigits; col++) {
       var d1 = digits1[col];
       var d2 = digits2[col];
-      var sum = d1 + d2 + carry;
+      var incomingCarry = carry;
+      var sum = d1 + d2 + incomingCarry;
 
-      if (d1 === 0 && d2 === 0 && carry === 0) break;
+      if (d1 === 0 && d2 === 0 && incomingCarry === 0) break;
 
       var colName = placeWord(col);
       var stepDesc = '';
       var stepTTS = '';
 
-      if (carry > 0) {
-        stepDesc = colName + ' column: ' + d1 + ' + ' + d2 + ' + ' + carry + ' (carry) = ' + sum;
-        stepTTS = 'Now the ' + colName + ' column: ' + numberToWords(d1) + ' plus ' + numberToWords(d2) + ' plus ' + numberToWords(carry) + ' carry equals ' + numberToWords(sum);
+      if (incomingCarry > 0) {
+        stepDesc = colName + ' column: ' + d1 + ' + ' + d2 + ' + ' + incomingCarry + ' (carry) = ' + sum;
+        stepTTS = 'Now the ' + colName + ' column: ' + numberToWords(d1) + ' plus ' + numberToWords(d2) + ' plus ' + numberToWords(incomingCarry) + ' carry equals ' + numberToWords(sum);
       } else {
         stepDesc = colName + ' column: ' + d1 + ' + ' + d2 + ' = ' + sum;
         stepTTS = 'Start with the ' + colName + ' column: ' + numberToWords(d1) + ' plus ' + numberToWords(d2) + ' equals ' + numberToWords(sum);
@@ -279,6 +280,10 @@ function generateColumnSteps(num1, num2, operation) {
         columnResult: sum,
         digitWritten: digit,
         carryValue: newCarry,
+        columnD1: d1,
+        columnD2: d2,
+        columnCarry: incomingCarry,
+        columnOperation: 'addition',
       });
     }
 
@@ -354,6 +359,10 @@ function generateColumnSteps(num1, num2, operation) {
         columnResult: diff,
         digitWritten: diff,
         carryValue: 0,
+        columnD1: dd1,
+        columnD2: dd2,
+        columnCarry: 0,
+        columnOperation: 'subtraction',
       });
     }
 
