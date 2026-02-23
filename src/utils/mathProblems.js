@@ -131,12 +131,16 @@ function generateCountingSteps(num1, num2, operation) {
       description: "Now let's put them all together!",
       ttsText: "Now let's put them all together!",
       total: answer,
+      group1: num1,
+      group2: num2,
     });
     steps.push({
       type: 'count_all',
       description: "Let's count them all!",
       ttsText: buildCountingText(answer),
       total: answer,
+      group1: num1,
+      group2: num2,
     });
     steps.push({
       type: 'answer',
