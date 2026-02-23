@@ -22,12 +22,20 @@ export function useTTS() {
     };
 
     loadVoices();
-    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    if (window.speechSynthesis.addEventListener) {
+      window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    } else {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
 
-    return () => {
+    return function () {
       window.speechSynthesis.cancel();
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+      if (window.speechSynthesis.removeEventListener) {
+        window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+      } else {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
     };
   }, []);
 
