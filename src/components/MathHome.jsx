@@ -23,6 +23,10 @@ export default function MathHome({ onStartRace, onStartLearn, onBack }) {
   var operation = opState[0];
   var setOperation = opState[1];
 
+  var playerState = useState(1);
+  var playerCount = playerState[0];
+  var setPlayerCount = playerState[1];
+
   return (
     <div className="screen math-home-screen">
       <button className="back-btn" onClick={onBack}>
@@ -75,6 +79,24 @@ export default function MathHome({ onStartRace, onStartLearn, onBack }) {
           </div>
         </div>
 
+        <div className="math-section">
+          <h3 className="math-section-title">Players</h3>
+          <div className="player-toggle">
+            <button
+              className={'player-toggle-btn' + (playerCount === 1 ? ' player-toggle-active' : '')}
+              onClick={function () { setPlayerCount(1); }}
+            >
+              👤 1 Player
+            </button>
+            <button
+              className={'player-toggle-btn' + (playerCount === 2 ? ' player-toggle-active' : '')}
+              onClick={function () { setPlayerCount(2); }}
+            >
+              👥 2 Players
+            </button>
+          </div>
+        </div>
+
         <div className="math-activity-buttons">
           <div
             role="button"
@@ -92,12 +114,14 @@ export default function MathHome({ onStartRace, onStartLearn, onBack }) {
             role="button"
             tabIndex={0}
             className="math-activity-btn math-race-btn"
-            onClick={function () { onStartRace(difficulty, operation); }}
+            onClick={function () { onStartRace(difficulty, operation, playerCount); }}
             style={{ cursor: 'pointer' }}
           >
             <span className="activity-btn-icon">🏁</span>
             <span className="activity-btn-label">Start Race!</span>
-            <span className="activity-btn-desc">Test your speed!</span>
+            <span className="activity-btn-desc">
+              {playerCount === 1 ? 'Solo race!' : 'Head to head!'}
+            </span>
           </div>
         </div>
       </div>

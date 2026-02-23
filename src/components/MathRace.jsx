@@ -3,6 +3,7 @@ import RaceTrack from './RaceTrack';
 import CarCounting from './CarCounting';
 import ColumnMethod from './ColumnMethod';
 import { generateProblemsSet, numberToWords, generateSolutionSteps } from '../utils/mathProblems';
+import { getCarById } from '../utils/carCharacters';
 import rustyImg from '../assets/rusty.png';
 
 var ENCOURAGEMENTS = [
@@ -12,7 +13,8 @@ var ENCOURAGEMENTS = [
 
 var TOTAL_PROBLEMS = 5;
 
-export default function MathRace({ difficulty, operation, onFinish, onBack }) {
+export default function MathRace({ difficulty, operation, carId, onFinish, onBack }) {
+  var selectedCar = getCarById(carId);
   var problemsState = useState(function () {
     return generateProblemsSet(TOTAL_PROBLEMS, difficulty, operation);
   });
@@ -106,7 +108,7 @@ export default function MathRace({ difficulty, operation, onFinish, onBack }) {
         </span>
       </div>
 
-      <RaceTrack progress={currentIndex} total={TOTAL_PROBLEMS} />
+      <RaceTrack progress={currentIndex} total={TOTAL_PROBLEMS} carImg={selectedCar.img} />
 
       <div className="race-problem">
         <div className="race-problem-text">

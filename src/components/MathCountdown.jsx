@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import speedyImg from '../assets/speedy.png';
 
-export default function MathCountdown({ onDone }) {
+export default function MathCountdown({ onDone, carImg, carImg2 }) {
   var countState = useState(3);
   var count = countState[0];
   var setCount = countState[1];
@@ -24,7 +24,10 @@ export default function MathCountdown({ onDone }) {
 
   return (
     <div className="screen countdown-screen">
-      <img src={speedyImg} alt="Speedy" className="countdown-car" />
+      <div className="countdown-cars">
+        <img src={carImg || speedyImg} alt="Car 1" className="countdown-car" />
+        {carImg2 && <img src={carImg2} alt="Car 2" className="countdown-car countdown-car-2" />}
+      </div>
       <div
         className="countdown-number"
         style={{ color: colors[count] || '#27ae60' }}
