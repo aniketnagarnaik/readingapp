@@ -89,6 +89,6 @@ function padDigits(num, len) {
 
 function padAnswer(digits, len) {
   var reversed = digits.slice().reverse();
-  while (reversed.length < len) reversed.push(' ');
+  while (reversed.length < len) reversed.unshift(' ');
   return reversed;
 }
