@@ -1,6 +1,11 @@
-export default function HomeScreen({ onChoosePhoto, onChooseText, onChooseSamples }) {
+export default function HomeScreen({ onChoosePhoto, onChooseText, onChooseSamples, onBack }) {
   return (
     <div className="screen home-screen">
+      {onBack && (
+        <button className="back-btn" onClick={onBack}>
+          ← Back
+        </button>
+      )}
       <div className="home-content">
         <h1 className="app-title">Reading Adventure</h1>
         <p className="app-subtitle">Let's learn to read together!</p>
