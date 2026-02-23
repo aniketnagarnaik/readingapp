@@ -167,12 +167,15 @@ function generateCountingSteps(num1, num2, operation) {
       ttsText: numberToWords(num2) + ' cars drive away!',
       removeCount: num2,
       remaining: answer,
+      originalCount: num1,
     });
     steps.push({
       type: 'count_remaining',
       description: "Let's count what's left!",
       ttsText: buildCountingText(answer),
       total: answer,
+      removedCount: num2,
+      originalCount: num1,
     });
     steps.push({
       type: 'answer',

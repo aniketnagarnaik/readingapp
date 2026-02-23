@@ -30,32 +30,41 @@ export default function CarCounting({ step }) {
   }
 
   if (type === 'remove') {
-    var remaining = [];
-    for (var k = 0; k < step.remaining; k++) {
-      remaining.push(
-        <span key={'r' + k} className="counting-car counting-car-red">
-          🚗
-        </span>
-      );
-    }
-    var removed = [];
-    for (var l = 0; l < step.removeCount; l++) {
-      removed.push(
-        <span key={'x' + l} className="counting-car counting-car-leaving">
-          🚗
-        </span>
+    var originalCount = step.originalCount || (step.remaining + step.removeCount);
+    var allCarsRemove = [];
+    for (var k = 0; k < originalCount; k++) {
+      var isLeaving = k >= step.remaining;
+      allCarsRemove.push(
+        <div key={k} className={'counting-car-wrapper' + (isLeaving ? ' counting-car-leaving-wrapper' : '')}>
+          <span className={'counting-car counting-car-red' + (isLeaving ? ' counting-car-driving-away' : '')}>
+            🚗
+          </span>
+          {isLeaving && (
+            <span className="counting-bye">✖</span>
+          )}
+        </div>
       );
     }
     return (
       <div className="car-counting">
-        <div className="counting-row">{remaining}</div>
-        <div className="counting-row counting-row-leaving">{removed}</div>
+        <div className="counting-row counting-row-merged">{allCarsRemove}</div>
+        <div className="counting-remove-label">
+          <span className="counting-remove-text">
+            {step.removeCount} drove away!
+          </span>
+        </div>
       </div>
     );
   }
 
   if (type === 'count_remaining') {
-    return <CountingWithPointer total={step.total} group1={step.total} group2={0} />;
+    return (
+      <SubtractionCounting
+        total={step.total}
+        removedCount={step.removedCount || 0}
+        originalCount={step.originalCount || step.total}
+      />
+    );
   }
 
   return null;
@@ -78,6 +87,62 @@ function MergedCars({ step, counting }) {
         <span className={'counting-car counting-car-' + color + ' counting-car-merged'}>
           🚗
         </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="car-counting">
+      <div className="counting-row counting-row-merged">{cars}</div>
+    </div>
+  );
+}
+
+function SubtractionCounting({ total, removedCount, originalCount }) {
+  var highlightState = useState(-1);
+  var highlightIndex = highlightState[0];
+  var setHighlightIndex = highlightState[1];
+  var timerRef = useRef(null);
+
+  useEffect(function () {
+    var idx = 0;
+    setHighlightIndex(0);
+
+    timerRef.current = setInterval(function () {
+      idx = idx + 1;
+      if (idx >= total) {
+        clearInterval(timerRef.current);
+        setHighlightIndex(total - 1);
+        return;
+      }
+      setHighlightIndex(idx);
+    }, 800);
+
+    return function () {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [total]);
+
+  var cars = [];
+  for (var i = 0; i < originalCount; i++) {
+    var isRemoved = i >= total;
+    var isActive = !isRemoved && i === highlightIndex;
+    var isCounted = !isRemoved && i <= highlightIndex;
+
+    cars.push(
+      <div key={i} className={'counting-car-wrapper' + (isActive ? ' counting-active' : '') + (isRemoved ? ' counting-car-gone-wrapper' : '')}>
+        <span className={'counting-car counting-car-red' + (isActive ? ' counting-car-highlight' : '') + (isRemoved ? ' counting-car-gone' : '')}>
+          🚗
+        </span>
+        {isRemoved && (
+          <span className="counting-bye-small">✖</span>
+        )}
+        {isCounted && !isRemoved && (
+          <span className="counting-number">{i + 1}</span>
+        )}
+        {isActive && (
+          <span className="counting-pointer">👆</span>
+        )}
       </div>
     );
   }

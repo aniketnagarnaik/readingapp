@@ -1568,6 +1568,57 @@ button, [role="button"] {
   100% { transform: scale(1); opacity: 1; }
 }
 
+.counting-car-leaving-wrapper {
+  opacity: 1;
+}
+
+.counting-car-driving-away {
+  opacity: 0.25;
+  filter: grayscale(100%);
+  animation: driveAway 0.8s ease-out;
+}
+
+@keyframes driveAway {
+  0% { transform: translateX(0); opacity: 1; filter: none; }
+  100% { transform: translateX(0); opacity: 0.25; filter: grayscale(100%); }
+}
+
+.counting-bye {
+  font-size: 1rem;
+  color: #e74c3c;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.counting-bye-small {
+  font-size: 0.7rem;
+  color: #e74c3c;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.counting-car-gone-wrapper {
+  opacity: 0.3;
+}
+
+.counting-car-gone {
+  filter: grayscale(100%);
+}
+
+.counting-remove-label {
+  margin-top: 4px;
+}
+
+.counting-remove-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.15);
+  padding: 4px 14px;
+  border-radius: 50px;
+}
+
 .counting-row-leaving {
   opacity: 0.3;
   text-decoration: line-through;
