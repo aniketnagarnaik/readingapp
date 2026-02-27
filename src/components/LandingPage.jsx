@@ -1,6 +1,6 @@
 import speedyImg from '../assets/speedy.png';
 
-export default function LandingPage({ onChooseReading, onChooseMath, onChooseCompare }) {
+export default function LandingPage({ onChooseReading, onChooseMath, onChooseCompare, onChoosePattern }) {
   return (
     <div className="screen landing-screen">
       <div className="landing-content">
@@ -42,6 +42,18 @@ export default function LandingPage({ onChooseReading, onChooseMath, onChooseCom
             <span className="landing-btn-icon">⚖️</span>
             <span className="landing-btn-label">Number Compare</span>
             <span className="landing-btn-desc">Which number is bigger?</span>
+          </div>
+
+          <div
+            role="button"
+            tabIndex={0}
+            className="landing-btn landing-btn-pattern"
+            onClick={onChoosePattern}
+            style={{ cursor: 'pointer' }}
+          >
+            <span className="landing-btn-icon">🧩</span>
+            <span className="landing-btn-label">Pattern Power</span>
+            <span className="landing-btn-desc">Complete the pattern!</span>
           </div>
         </div>
       </div>

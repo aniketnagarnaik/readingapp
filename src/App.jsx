@@ -16,8 +16,17 @@ import MathResults from './components/MathResults';
 import CompareHome from './components/CompareHome';
 import CompareRace from './components/CompareRace';
 import TwoPlayerCompareRace from './components/TwoPlayerCompareRace';
+import PatternHome from './components/PatternHome';
+import PatternRace from './components/PatternRace';
+import TwoPlayerPatternRace from './components/TwoPlayerPatternRace';
 import { getCarById } from './utils/carCharacters';
 import { parseTextIntoPages } from './utils/textParser';
+
+var HOME_SCREENS = {
+  math: 'mathHome',
+  compare: 'compareHome',
+  pattern: 'patternHome',
+};
 
 export default function App() {
   var screenState = useState('landing');
@@ -107,6 +116,14 @@ export default function App() {
     setScreen('charSelect');
   }, []);
 
+  /* ---- Pattern Race handlers ---- */
+
+  var handleStartPatternRace = useCallback(function (pCount) {
+    setGameType('pattern');
+    setPlayerCount(pCount || 1);
+    setScreen('charSelect');
+  }, []);
+
   /* ---- Shared handlers ---- */
 
   var handleCharactersDone = useCallback(function (car1, car2) {
@@ -118,6 +135,8 @@ export default function App() {
   var handleCountdownDone = useCallback(function () {
     if (gameType === 'compare') {
       setScreen(playerCount === 2 ? 'compareRace2P' : 'compareRace');
+    } else if (gameType === 'pattern') {
+      setScreen(playerCount === 2 ? 'patternRace2P' : 'patternRace');
     } else {
       setScreen(playerCount === 2 ? 'mathRace2P' : 'mathRace');
     }
@@ -136,7 +155,7 @@ export default function App() {
     setScreen('results');
   }, []);
 
-  var homeScreenForGame = gameType === 'compare' ? 'compareHome' : 'mathHome';
+  var homeScreenForGame = HOME_SCREENS[gameType] || 'mathHome';
 
   var p1CarImg = getCarById(p1CarId).img;
   var p2CarImg = getCarById(p2CarId).img;
@@ -149,6 +168,7 @@ export default function App() {
             onChooseReading={function () { setScreen('home'); }}
             onChooseMath={function () { setScreen('mathHome'); }}
             onChooseCompare={function () { setScreen('compareHome'); }}
+            onChoosePattern={function () { setScreen('patternHome'); }}
           />
         )}
         {currentScreen === 'home' && (
@@ -212,6 +232,14 @@ export default function App() {
           />
         )}
 
+        {/* Pattern game screens */}
+        {currentScreen === 'patternHome' && (
+          <PatternHome
+            onStartRace={handleStartPatternRace}
+            onBack={handleBackToLanding}
+          />
+        )}
+
         {/* Shared screens: Character Select, Countdown, Results */}
         {currentScreen === 'charSelect' && (
           <CharacterSelect
@@ -268,6 +296,25 @@ export default function App() {
               p2CarId={p2CarId}
               onFinish={handleTwoPlayerFinish}
               onBack={function () { setScreen('compareHome'); }}
+            />
+          </ErrorBoundary>
+        )}
+        {currentScreen === 'patternRace' && (
+          <ErrorBoundary>
+            <PatternRace
+              carId={p1CarId}
+              onFinish={handleRaceFinish}
+              onBack={function () { setScreen('patternHome'); }}
+            />
+          </ErrorBoundary>
+        )}
+        {currentScreen === 'patternRace2P' && (
+          <ErrorBoundary>
+            <TwoPlayerPatternRace
+              p1CarId={p1CarId}
+              p2CarId={p2CarId}
+              onFinish={handleTwoPlayerFinish}
+              onBack={function () { setScreen('patternHome'); }}
             />
           </ErrorBoundary>
         )}
