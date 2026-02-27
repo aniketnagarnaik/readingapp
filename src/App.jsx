@@ -13,6 +13,9 @@ import MathCountdown from './components/MathCountdown';
 import MathRace from './components/MathRace';
 import TwoPlayerRace from './components/TwoPlayerRace';
 import MathResults from './components/MathResults';
+import CompareHome from './components/CompareHome';
+import CompareRace from './components/CompareRace';
+import TwoPlayerCompareRace from './components/TwoPlayerCompareRace';
 import { getCarById } from './utils/carCharacters';
 import { parseTextIntoPages } from './utils/textParser';
 
@@ -57,6 +60,10 @@ export default function App() {
   var p2Score = p2ScoreState[0];
   var setP2Score = p2ScoreState[1];
 
+  var gameTypeState = useState('math');
+  var gameType = gameTypeState[0];
+  var setGameType = gameTypeState[1];
+
   var handleTextReady = useCallback(function (text) {
     var parsed = parseTextIntoPages(text);
     if (parsed.length > 0) {
@@ -75,7 +82,10 @@ export default function App() {
     setPages([]);
   }, []);
 
+  /* ---- Math Race handlers ---- */
+
   var handleStartRace = useCallback(function (difficulty, operation, pCount) {
+    setGameType('math');
     setMathDifficulty(difficulty);
     setMathOperation(operation);
     setPlayerCount(pCount || 1);
@@ -88,32 +98,45 @@ export default function App() {
     setScreen('mathLearn');
   }, []);
 
+  /* ---- Compare Race handlers ---- */
+
+  var handleStartCompareRace = useCallback(function (difficulty, pCount) {
+    setGameType('compare');
+    setMathDifficulty(difficulty);
+    setPlayerCount(pCount || 1);
+    setScreen('charSelect');
+  }, []);
+
+  /* ---- Shared handlers ---- */
+
   var handleCharactersDone = useCallback(function (car1, car2) {
     setP1CarId(car1);
     if (car2) setP2CarId(car2);
-    setScreen('mathCountdown');
+    setScreen('countdown');
   }, []);
 
   var handleCountdownDone = useCallback(function () {
-    if (playerCount === 2) {
-      setScreen('mathRace2P');
+    if (gameType === 'compare') {
+      setScreen(playerCount === 2 ? 'compareRace2P' : 'compareRace');
     } else {
-      setScreen('mathRace');
+      setScreen(playerCount === 2 ? 'mathRace2P' : 'mathRace');
     }
-  }, [playerCount]);
+  }, [playerCount, gameType]);
 
   var handleRaceFinish = useCallback(function (totalWrong) {
     setMathTotalWrong(totalWrong);
     setP1Score(0);
     setP2Score(0);
-    setScreen('mathResults');
+    setScreen('results');
   }, []);
 
   var handleTwoPlayerFinish = useCallback(function (score1, score2) {
     setP1Score(score1);
     setP2Score(score2);
-    setScreen('mathResults');
+    setScreen('results');
   }, []);
+
+  var homeScreenForGame = gameType === 'compare' ? 'compareHome' : 'mathHome';
 
   var p1CarImg = getCarById(p1CarId).img;
   var p2CarImg = getCarById(p2CarId).img;
@@ -125,6 +148,7 @@ export default function App() {
           <LandingPage
             onChooseReading={function () { setScreen('home'); }}
             onChooseMath={function () { setScreen('mathHome'); }}
+            onChooseCompare={function () { setScreen('compareHome'); }}
           />
         )}
         {currentScreen === 'home' && (
@@ -161,18 +185,13 @@ export default function App() {
             />
           </ErrorBoundary>
         )}
+
+        {/* Math game screens */}
         {currentScreen === 'mathHome' && (
           <MathHome
             onStartRace={handleStartRace}
             onStartLearn={handleStartLearn}
             onBack={handleBackToLanding}
-          />
-        )}
-        {currentScreen === 'charSelect' && (
-          <CharacterSelect
-            playerCount={playerCount}
-            onDone={handleCharactersDone}
-            onBack={function () { setScreen('mathHome'); }}
           />
         )}
         {currentScreen === 'mathLearn' && (
@@ -184,7 +203,24 @@ export default function App() {
             />
           </ErrorBoundary>
         )}
-        {currentScreen === 'mathCountdown' && (
+
+        {/* Compare game screens */}
+        {currentScreen === 'compareHome' && (
+          <CompareHome
+            onStartRace={handleStartCompareRace}
+            onBack={handleBackToLanding}
+          />
+        )}
+
+        {/* Shared screens: Character Select, Countdown, Results */}
+        {currentScreen === 'charSelect' && (
+          <CharacterSelect
+            playerCount={playerCount}
+            onDone={handleCharactersDone}
+            onBack={function () { setScreen(homeScreenForGame); }}
+          />
+        )}
+        {currentScreen === 'countdown' && (
           <MathCountdown
             onDone={handleCountdownDone}
             carImg={p1CarImg}
@@ -214,7 +250,28 @@ export default function App() {
             />
           </ErrorBoundary>
         )}
-        {currentScreen === 'mathResults' && (
+        {currentScreen === 'compareRace' && (
+          <ErrorBoundary>
+            <CompareRace
+              difficulty={mathDifficulty}
+              carId={p1CarId}
+              onFinish={handleRaceFinish}
+              onBack={function () { setScreen('compareHome'); }}
+            />
+          </ErrorBoundary>
+        )}
+        {currentScreen === 'compareRace2P' && (
+          <ErrorBoundary>
+            <TwoPlayerCompareRace
+              difficulty={mathDifficulty}
+              p1CarId={p1CarId}
+              p2CarId={p2CarId}
+              onFinish={handleTwoPlayerFinish}
+              onBack={function () { setScreen('compareHome'); }}
+            />
+          </ErrorBoundary>
+        )}
+        {currentScreen === 'results' && (
           <MathResults
             totalWrong={mathTotalWrong}
             p1Score={p1Score}
@@ -222,7 +279,7 @@ export default function App() {
             p1CarId={p1CarId}
             p2CarId={p2CarId}
             playerCount={playerCount}
-            onRaceAgain={function () { setScreen('mathHome'); }}
+            onRaceAgain={function () { setScreen(homeScreenForGame); }}
             onHome={handleBackToLanding}
           />
         )}
