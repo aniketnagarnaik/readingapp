@@ -2738,16 +2738,10 @@ button, [role="button"] {
   animation: numPulse 0.5s ease;
 }
 
-.compare-btn-arrow {
-  font-size: 2rem;
+.compare-btn-symbol {
+  font-size: 3rem;
+  font-weight: 800;
   line-height: 1;
-}
-
-.compare-btn-text {
-  font-size: 1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 @media (max-width: 600px) {
@@ -2769,12 +2763,8 @@ button, [role="button"] {
     min-height: 60px;
   }
 
-  .compare-btn-arrow {
-    font-size: 1.5rem;
-  }
-
-  .compare-btn-text {
-    font-size: 0.8rem;
+  .compare-btn-symbol {
+    font-size: 2.2rem;
   }
 
   .compare-numbers {

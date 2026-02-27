@@ -209,24 +209,21 @@ export default function TwoPlayerCompareRace({ difficulty, p1CarId, p2CarId, onF
               onClick={function () { handleAnswer('left'); }}
               disabled={feedback !== null}
             >
-              <span className="compare-btn-arrow">⬅</span>
-              <span className="compare-btn-text">Bigger</span>
+              <span className="compare-btn-symbol">&gt;</span>
             </button>
             <button
               className={'compare-btn compare-btn-equal' + (feedback && correctAnswer === 'equal' ? ' compare-btn-correct' : '')}
               onClick={function () { handleAnswer('equal'); }}
               disabled={feedback !== null}
             >
-              <span className="compare-btn-arrow">=</span>
-              <span className="compare-btn-text">Same</span>
+              <span className="compare-btn-symbol">=</span>
             </button>
             <button
               className={'compare-btn compare-btn-right' + (feedback && correctAnswer === 'right' ? ' compare-btn-correct' : '')}
               onClick={function () { handleAnswer('right'); }}
               disabled={feedback !== null}
             >
-              <span className="compare-btn-arrow">➡</span>
-              <span className="compare-btn-text">Bigger</span>
+              <span className="compare-btn-symbol">&lt;</span>
             </button>
           </div>
 
